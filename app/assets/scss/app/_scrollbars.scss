@@ -1,0 +1,21 @@
+/* TODO: Choose scrollbar styles */
+// html *
+// {
+//   &::-webkit-scrollbar {
+//     width: 0.7em;
+//     height: 0.7em;
+//     @apply bg-transparent;
+//   }
+
+//   &::-webkit-scrollbar-track {
+//     @apply bg-scrollbar-track;
+//   }
+
+//   &::-webkit-scrollbar-thumb {
+//     border-radius: 0.6em;
+//     @apply bg-scrollbar-thumb hover:bg-scrollbar-hover;
+//   }
+// }
+
+/* Hide scrollbar: */
+.no-scrollbar { @include fx.no-scrollbar; }

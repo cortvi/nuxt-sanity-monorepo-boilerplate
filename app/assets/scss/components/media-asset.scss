@@ -1,0 +1,29 @@
+.c-media-asset
+{
+  position: relative;
+  overflow: hidden;
+  &.fixed-dimensions
+  {
+    &, >* { @include fx.cover-parent; }
+    img, video { object-fit: cover; }
+  }
+  &.is-auto-width
+  {
+    &, picture, img, video {
+      width: auto;
+      height: 100%;
+    }
+  }
+  &.is-auto-height
+  {
+    &, picture, img, video {
+      width: 100%;
+      height: auto;
+    }
+  }
+  &:has(img[src=""])
+  {
+    background-color: var(--color-black);
+    img { display: none; }
+  }
+}

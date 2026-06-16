@@ -1,0 +1,65 @@
+@use 'sass:meta';
+@use 'sass:list';
+
+
+html
+{
+  /* Basic settings */
+  /* TODO: Choose to use fluid font size or not */
+  color: var(--html-color);
+  // font-size: #{calc(1 / 375 * 100vw)};
+  // @include fx.screen-md {
+  //   font-size: #{calc(1 / 1440 * 100vw)};
+  // }
+  &, body
+  {
+    background-color: var(--html-bg);
+    overscroll-behavior-y: none;
+  }
+  &.no-scrollbar { overflow: hidden !important; }
+
+
+  /* Typography */
+  /* TODO: Choose typography styles */
+  // .text-font-1 { @include typo.font-1; }
+
+  // @each $weight in ('200', '300', '400', '500', '600', '700', '800', '900') {
+  //   .text-#{$weight} { font-weight: #{$weight}; }
+  // }
+
+  // @each $size in (
+  //   'h1', 'h2', 'h3', 'h4',
+  //   'body-1-regular', 'body-1-light',
+  //   'body-2-regular', 'body-2-light',
+  //   'body-3-semibold', 'body-3-regular', 'body-3-light',
+  //   'caption', 'label', 'legal',
+  // ) {
+  //   .text-#{$size}
+  //   {
+  //     $mixin: meta.get-mixin(#{$size}, 'typo');
+  //     // @include meta.apply($mixin);
+  //     @if list.index(
+  //       ('body-2-regular', 'body-2-light',
+  //       'body-3-semibold', 'body-3-regular', 'body-3-light',
+  //       'caption', 'label', 'legal'),
+  //       $size
+  //     ) {
+  //       @include meta.apply($mixin, 'px');
+  //     }
+  //     @else {
+  //       @include meta.apply($mixin, 'px');
+  //       @include fx.bp-lg {
+  //         @include meta.apply($mixin);
+  //       }
+  //     }
+  //   }
+  // }
+  
+  
+  /* Layout */
+  .boxed-h
+  {
+    padding-left: var(--box-spacing-x);
+    padding-right: var(--box-spacing-x);
+  }
+}

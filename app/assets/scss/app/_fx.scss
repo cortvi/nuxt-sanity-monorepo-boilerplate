@@ -1,0 +1,67 @@
+@use "sass:string";
+@use "sass:meta";
+
+
+@mixin cover-parent($position: absolute)
+{
+  width: 100%;
+  height: 100%;
+  position: $position;
+  top: 0;
+  left: 0;
+}
+@mixin clip-path($type: 'on')
+{
+  @if ($type == 'on') {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
+  }
+  @else if ($type == 'off-top') {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0 0%);
+  }
+  @else if ($type == 'off-right') {
+    clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+  }
+  @else if ($type == 'off-left') {
+    clip-path: polygon(0% 0%, 0% 0%, 0 100%, 0 100%);
+  }
+  @else if ($type == 'off-bottom') {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0 100%);
+  }
+}
+
+@mixin font($size, $line-height: false, $spacing: false, $units: 'rem')
+{
+  font-size: #{$size}#{$units};
+  @if $line-height { line-height: #{calc($line-height / $size)}em; }
+  @if $spacing { letter-spacing: #{calc($spacing / 100)}em; }
+}
+
+@mixin breakpoint($size: 900, $type: 'max')
+{
+  @if $type == 'min'
+  {
+    @media (min-width: #{$size}px) {
+      @content;
+    }
+  }
+  @else if $type == 'max'
+  {
+    @media (max-width: #{$size}px) {
+      @content;
+    }
+  }
+}
+@mixin screen-md { @include breakpoint(901, 'min') { @content; } }
+@mixin screen-lg { @include breakpoint(1441, 'min') { @content; } }
+
+@mixin no-scrollbar
+{
+  /* For IE, Edge and Firefox */
+  overflow: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

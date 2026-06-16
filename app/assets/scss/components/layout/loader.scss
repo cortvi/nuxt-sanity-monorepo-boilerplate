@@ -1,0 +1,13 @@
+.c-layout-loader
+{
+  background-color: var(--html-bg);
+  @include fx.cover-parent(fixed);
+  z-index: 99;
+  transition: opacity var(--duration, 0.5s) ease-in;
+  overflow: hidden;
+  &:not(.is-visible)
+  {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
