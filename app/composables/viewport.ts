@@ -4,11 +4,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 /** WARNING: These values must be used only on client-side */
 export const useViewport = () =>
 {
+  const _isFirstTime = useState('viewport-is-first-time', () => true);
   const _width = useState<number | undefined>('viewport-w');
   const _height = useState<number | undefined>('viewport-h');
   const _rem = useState<number | undefined>('viewport-rem');
   const _vh = useState<number | undefined>('viewport-vh');
-  const isMobile = useState<boolean | undefined>('is-mobile');
+  const isMobile = ref(true);
 
   const width = computed({
     get: () =>
@@ -16,7 +17,7 @@ export const useViewport = () =>
       if (!_width.value)
       {
         if (import.meta.client) _width.value = window.innerWidth;
-        else _width.value = Number.POSITIVE_INFINITY;
+        else _width.value = 430;
       }
       return _width.value;
     },
@@ -28,7 +29,7 @@ export const useViewport = () =>
       if (!_height.value)
       {
         if (import.meta.client) _height.value = window.innerHeight;
-        else _height.value = Number.POSITIVE_INFINITY;
+        else _height.value = 932;
       }
       return _height.value;
     },
@@ -44,7 +45,7 @@ export const useViewport = () =>
           _vh.value = window.innerHeight * 0.01;
           document.documentElement.style.setProperty('--vh', `${vh.value}px`);
         }
-        else _vh.value = 872 * 0.01;
+        else _vh.value = 932 * 0.01;
       }
       return _vh.value;
     },
@@ -69,9 +70,10 @@ export const useViewport = () =>
   const isTouch = computed(() =>
   {
     if (import.meta.client) return !!ScrollTrigger.isTouch;
-    else return false;
+    else return true;
   });
   const isMobileOrTouch = computed(() => isMobile.value || isTouch.value);
+  const isDesktop = computed(() => !isMobile.value);
 
 
   const isThin = (w?: number) => width.value <= (w ?? 900);
@@ -103,18 +105,20 @@ export const useViewport = () =>
 
   onMounted(() =>
   {
-    if (isMobile.value !== undefined) return;
-
+    if (_isFirstTime.value)
+    {
+      window.addEventListener('DOMContentLoaded', onChange);
+      window.addEventListener('resize', onChange);
+      onChange();
+      _isFirstTime.value = false;
+    }
     isMobile.value = isThin();
-    window.addEventListener('DOMContentLoaded', onChange);
-    window.addEventListener('resize', onChange);
-    onChange();
   });
 
 
   return {
     width, height, rem, vh,
-    isTouch, isMobile, isMobileOrTouch,
+    isTouch, isMobile, isMobileOrTouch, isDesktop,
     isThin, isShort, toRem,
     selectFrom, select,
   };

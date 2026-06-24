@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+// import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 // import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 // import { CustomEase } from 'gsap/CustomEase';
@@ -15,12 +15,12 @@ export default defineNuxtPlugin(() =>
   // Register GSAP addons:
   gsap.registerPlugin(
     ScrollTrigger,
-    ScrollToPlugin,
-    ScrollSmoother
-  // DrawSVGPlugin,
-  // CustomEase,
-  // Draggable,
-  // Flip
+    // ScrollToPlugin,
+    ScrollSmoother,
+    // DrawSVGPlugin,
+    // CustomEase
+    // Draggable,
+    // Flip
   );
   // Create scroll smoother:
   const smoother = ScrollSmoother.create({
@@ -30,5 +30,5 @@ export default defineNuxtPlugin(() =>
   });
   smoother.paused(true);
   useScrollSmoother(smoother);
-  ScrollTrigger.config({ ignoreMobileResize: true });
+  // ScrollTrigger.config({ ignoreMobileResize: true });
 });

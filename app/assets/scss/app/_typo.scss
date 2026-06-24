@@ -1,9 +1,12 @@
 @use "~/assets/scss/app/fx";
-
-
 /* TODO: Choose typography styles */
+
+
+/* Families */
 // @mixin font-1 { font-family: 'Some Font', sans-serif; }
 
+/* Text styles — fx.font($size, $line-height, $letter-spacing, $units)
+* line-height is a unitless multiplier, letter-spacing in %. */
 // @mixin h1($units: 'rem')
 // {
 //   font-weight: 300;

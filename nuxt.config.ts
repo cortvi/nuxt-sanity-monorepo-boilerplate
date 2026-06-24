@@ -1,3 +1,9 @@
+/* TODO: Uncomment when NUXT_SITE_URL is set */
+// if (!import.meta.env.NUXT_SITE_URL) {
+//   throw new Error('NUXT_SITE_URL is not set');
+// }
+
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -10,6 +16,12 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/i18n',
   ],
+
+  runtimeConfig: {
+    public: {
+      siteUrl: import.meta.env.NUXT_SITE_URL,
+    },
+  },
   app: {
     rootAttrs: { id: 'app' },
     head: {
@@ -23,7 +35,7 @@ export default defineNuxtConfig({
     fallbackToApi: false,
     customCollections: [
       {
-        prefix: 'nn',
+        prefix: 'i',
         dir: './app/assets/icon',
       },
     ],
@@ -71,6 +83,13 @@ export default defineNuxtConfig({
   //     redirectOn: 'root',
   //   },
   // },
+  hints: {
+    features: {
+      hydration: false,
+      lazyLoad: { logs: false },
+      webVitals: { logs: false },
+    },
+  },
   /* TODO: Choose inline styles */
   features: {
     inlineStyles: id =>
@@ -80,7 +99,8 @@ export default defineNuxtConfig({
         id.includes('/layout/') ||
         id.includes('/button/') ||
         id.includes('/reveal/') ||
-        id.includes('media-asset')
+        id.includes('media-asset') ||
+        id.includes('pages/index.vue')
       );
       return isInline;
     },

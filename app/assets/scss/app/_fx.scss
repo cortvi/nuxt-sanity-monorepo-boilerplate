@@ -2,6 +2,7 @@
 @use "sass:meta";
 
 
+@mixin screen-height { height: calc(var(--vh, 1vh) * 100); }
 @mixin cover-parent($position: absolute)
 {
   width: 100%;
@@ -32,7 +33,9 @@
 @mixin font($size, $line-height: false, $spacing: false, $units: 'rem')
 {
   font-size: #{$size}#{$units};
-  @if $line-height { line-height: #{calc($line-height / $size)}em; }
+  /* TODO: Choose line-height calculation method */
+  @if $line-height { line-height: $line-height; }
+  // @if $line-height { line-height: #{calc($line-height / $size)}em; }
   @if $spacing { letter-spacing: #{calc($spacing / 100)}em; }
 }
 

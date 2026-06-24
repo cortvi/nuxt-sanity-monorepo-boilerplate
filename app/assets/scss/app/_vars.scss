@@ -1,24 +1,9 @@
-/* TODO: Choose CSS variables */
 :root
 {
-  /* Colors */
-  --color-white: #FFFFFF;
-  --rgb-white: 255 255 255;
-
-  --color-black: #000000;
-  --rgb-black: 0 0 0;
-
-  --html-color: var(--color-black);
-  --html-bg: var(--color-white);
+  /* App surface */
+  --html-color: var(/* TODO: Choose default text color */);
+  --html-bg: var(/* TODO: Choose default background color */);
 
   /* Animation */
   --the-curve: cubic-bezier(.785, .135, .15, .86);
-
-
-  /* Layout */
-  --box-spacing-x: 40px;
-  @include fx.breakpoint
-  {
-    --box-spacing-x: 20px;
-  }
 }

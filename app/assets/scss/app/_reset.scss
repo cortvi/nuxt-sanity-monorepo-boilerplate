@@ -22,7 +22,8 @@ strike, tt, u, xmp {
 }
 
 /* Reset styles for all structural tags */
-a, abbr, area, article, aside, audio, b, bdo, blockquote, body, button, 
+a, abbr, area, article, aside, audio, b, bdo, blockquote, body,
+button:not(.blossom-dot),
 canvas, caption, cite, code, col, colgroup, command, datalist, dd, del, 
 details, dialog, dfn, div, dl, dt, em, embed, fieldset, figure, form,
 h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, i, iframe, img, 
