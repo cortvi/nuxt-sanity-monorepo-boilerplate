@@ -7,13 +7,13 @@ Use this template as a base, then work through the checklist below before buildi
 ## Requirements
 
 - Node.js **≥ 22**
-- pnpm **≥ 11**
+- pnpm **≥ 10**
 
 ## Quick start
 
 ```bash
 pnpm install
-cp .env.example .env   # set NUXT_SITE_URL when i18n is enabled
+cp .env.example .env   # set NUXT_SITE_URL (SEO, OG image, i18n)
 pnpm dev
 ```
 
@@ -34,20 +34,22 @@ The dev server runs at [http://localhost:3000](http://localhost:3000).
 ## What's included
 
 - **Nuxt modules** — `@nuxt/eslint`, `@nuxt/fonts`, `@nuxt/hints`, `@nuxt/icon`, `@nuxtjs/i18n`
-- **GSAP** — ScrollTrigger, ScrollTo, ScrollSmoother (with a client plugin and composables)
+- **GSAP** — ScrollTrigger and ScrollSmoother (client plugin and composables; ScrollTo and other addons stubbed for opt-in)
 - **Page transitions** — global middleware with loader and site state
 - **SCSS** — variables, typography mixins, breakpoints, and component styles with auto-imported partials
-- **Icons** — local custom collection under `app/assets/icon` (prefix `nn`)
+- **Icons** — local custom collection under `app/assets/icon` (prefix `i`; add SVGs to the folder)
 - **Reveal components** — text/chars/lines/underline animation helpers
-- **Composables** — viewport, scroll smoother, site state, GSAP helpers, and utilities
+- **Composables** — viewport, scroll smoother, site state, GSAP helpers, page meta, and utilities
 
 ## Project structure
 
 ```
 app/
-├── assets/scss/app/     # Global styles, tokens, typography
+├── assets/scss/
+│   ├── app/             # Global styles, tokens, typography
+│   └── components/      # Per-component styles
 ├── components/          # Layout, reveal, media, text components
-├── composables/         # Shared Vue composables
+├── composables/         # Shared Vue composables (incl. page-meta)
 ├── i18n/                # Locale messages and i18n config
 ├── layouts/             # Default layout (ScrollSmoother wrapper)
 ├── middleware/          # Trailing-slash removal, page transitions
@@ -55,6 +57,7 @@ app/
 ├── plugins/             # GSAP client plugin
 ├── types/               # Shared TypeScript types
 └── utils/               # Pure helpers
+public/                  # Static assets (favicons, OG thumbnail, …)
 ```
 
 ## Before you start a new project
@@ -63,17 +66,17 @@ Search the repo for `TODO` and resolve each item. They mark decisions that vary 
 
 ### 1. Design tokens — `app/assets/scss/app/_vars.scss`
 
-Define CSS custom properties: brand colors, spacing, animation curves, layout breakpoints, etc. The file currently only has black/white placeholders.
+Define CSS custom properties: brand colors, spacing, animation curves, layout breakpoints, etc. The file currently has `TODO` placeholders for default text and background colors.
 
 ### 2. Typography — `_typo.scss` and `index.scss`
 
 - Add font-family mixins and size/weight mixins in `_typo.scss`
-- Uncomment and wire up utility classes in `index.scss` (`.text-h1`, `.text-body-1-regular`, weight classes, …)
-- Decide whether to use **fluid root font size** (commented `font-size` rules in `index.scss`)
+- Populate the `@each` style lists in `index.scss` to generate utility classes (e.g. `.text-h1`, `.text-body-1-regular`; weight classes are already wired)
+- A **fluid rem base** is already enabled (`1px` at design width, scaling above `screen-lg`) — adjust or remove if your project uses a different sizing system
 
 ### 3. Default body class — `nuxt.config.ts`
 
-Set `app.head.bodyAttrs.class` to the project's default typography utility (e.g. `.text-body-1-regular`).
+Set `app.head.bodyAttrs.class` to the project's default typography utility (e.g. `text-body-1-regular`).
 
 ### 4. Fonts — `nuxt.config.ts`
 
@@ -96,25 +99,33 @@ Review `features.inlineStyles`: the predicate decides which component styles are
 
 ### 8. GSAP plugins — `app/plugins/gsap.client.ts`
 
-Register only the GSAP addons the project needs (DrawSVG, CustomEase, Draggable, Flip, …). ScrollSmoother settings (`smooth`, `effects`, etc.) can be tuned here too.
+Register only the GSAP addons the project needs (ScrollTo, DrawSVG, CustomEase, Draggable, Flip, …). ScrollSmoother settings (`smooth`, `effects`, etc.) can be tuned here too.
 
-### 9. Error page — `app/error.vue`
+### 9. Default SEO — `app/app.vue`
+
+Fill in `usePageMeta` defaults: title, description, and OG image path.
+
+### 10. Public assets — `public/`
+
+Add favicons under `public/favicon/` and an OG thumbnail at `public/thumbnail.png` (referenced by `usePageMeta` and `app/composables/page-meta.ts`).
+
+### 11. Error page — `app/error.vue`
 
 Replace the minimal status-code placeholder with a styled error view.
 
-### 10. Locale copy — `app/i18n/locales/en.ts`
+### 12. Locale copy — `app/i18n/locales/en.ts`
 
 Replace placeholder strings and expand the `LocaleTexts` type as you add keys.
 
 ---
 
-After the checklist, rename the package in `package.json`, update icons/assets, and start building pages under `app/pages/`.
+After the checklist, rename the package in `package.json`, add icons under `app/assets/icon`, and start building pages under `app/pages/`.
 
 ## Environment
 
 | Variable | Description |
 | --- | --- |
-| `NUXT_SITE_URL` | Public site URL — required for i18n SEO (`baseUrl`) and canonical links |
+| `NUXT_SITE_URL` | Public site URL — used for OG image URLs, i18n SEO (`baseUrl`), and canonical links |
 
 See `.env.example`.
 
