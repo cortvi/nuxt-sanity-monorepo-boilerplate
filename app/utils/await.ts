@@ -3,3 +3,9 @@ export const skipFrame = () =>
 
 export const skipTime = (miliseconds: number) =>
   new Promise(r => setTimeout(r, miliseconds));
+
+export const waitFor = async<T>(getter: MaybeRefOrGetter<T | undefined>) =>
+{
+  while (!toValue(getter)) await nextTick();
+  return toValue(getter)!;
+};

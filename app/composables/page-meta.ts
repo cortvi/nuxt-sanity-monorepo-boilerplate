@@ -8,7 +8,15 @@ export const usePageMeta = (
   const i18nHead = useLocaleHead();
 
   const seoData = computed(() => toValue(seo));
-  const title = computed(() => seoData.value?.title);
+  const title = computed(() =>
+  {
+    // TODO: configure SEO tail
+    const tail = 'Nuxt boilerplate';
+    const title = seoData.value?.title;
+    if (!title) return tail;
+    if (seoData.value?.fullTitle) return title;
+    return `${title} — ${tail}`;
+  });
   const description = computed(() => seoData.value?.description);
   const image = computed(() => seoData.value?.image);
 

@@ -7,6 +7,7 @@ export const useViewport = () =>
   const _isFirstTime = useState('viewport-is-first-time', () => true);
   const _width = useState<number | undefined>('viewport-w');
   const _height = useState<number | undefined>('viewport-h');
+  const _headerHeight = useState<number | undefined>('viewport-header-height');
   const _rem = useState<number | undefined>('viewport-rem');
   const _vh = useState<number | undefined>('viewport-vh');
   const isMobile = ref(true);
@@ -34,6 +35,28 @@ export const useViewport = () =>
       return _height.value;
     },
     set: value => _height.value = value,
+  });
+  const headerHeight = computed({
+    get: () =>
+    {
+      if (!_headerHeight.value)
+      {
+        _headerHeight.value = 92;
+        if (import.meta.client) nextTick(() =>
+        {
+          const navbar = document.querySelector('.c-layout-header>.navbar');
+          if (!navbar) return;
+
+          _headerHeight.value = navbar.clientHeight;
+          document.documentElement.style.setProperty(
+            '--header-height',
+            `${_headerHeight.value}px`
+          );
+        });
+      }
+      return _headerHeight.value;
+    },
+    set: value => _headerHeight.value = value,
   });
   const vh = computed({
     get: () =>
@@ -78,7 +101,7 @@ export const useViewport = () =>
 
   const isThin = (w?: number) => width.value <= (w ?? 900);
   const isShort = (h: number) => height.value <= h;
-  const toRem = (px: number) => px * rem.value;
+  const toPx = (remAmount: number) => remAmount * rem.value;
 
   /** Desktop first (window.width <= options.key) */
   const selectFrom = <T>(fallback: T, options: Record<number, T>) =>
@@ -86,7 +109,7 @@ export const useViewport = () =>
     for (const key of Object.keys(options))
     {
       const n = Number(key);
-      if (isThin(n)) return options[n];
+      if (isThin(n)) return options[n]!;
     }
     return fallback;
   };
@@ -99,7 +122,8 @@ export const useViewport = () =>
     _rem.value = undefined;
     _vh.value = undefined;
     // Read vh so that it writes to CSS:
-    const _ = vh.value;
+    const _ = headerHeight.value;
+    const __ = vh.value;
   };
 
 
@@ -117,9 +141,9 @@ export const useViewport = () =>
 
 
   return {
-    width, height, rem, vh,
+    width, height, rem, vh, headerHeight,
     isTouch, isMobile, isMobileOrTouch, isDesktop,
-    isThin, isShort, toRem,
+    isThin, isShort, toPx,
     selectFrom, select,
   };
 };

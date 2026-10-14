@@ -22,6 +22,7 @@ useGsap({
     trigger = ScrollTrigger.create({
       trigger: root.value,
       start: 'top bottom+=100',
+      ...onceUnlessDev,
       onLeaveBack: () => innerState.value = false,
       onEnter: () => innerState.value = true,
     });

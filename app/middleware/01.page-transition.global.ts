@@ -23,6 +23,9 @@ export default defineNuxtRouteMiddleware(async (to, from) =>
     if (!siteState.isNavigating.value) return;
     siteState.isNavigating.value = false;
 
+    /* TODO: configure page transition duration
+     * (wait until screen is fully visible + some rest space)
+     */
     useTimeout('site-page-transition', 450, () =>
     {
       if (!isInDom(smoother.content()))
@@ -68,6 +71,9 @@ export default defineNuxtRouteMiddleware(async (to, from) =>
     siteState.isNavigating.value = true;
 
     // Reset page scroll when loader is hiding site:
+    /* TODO: configure page transition duration
+     * (wait until screen is fully hidden)
+     */
     await skipTime(250);
     useScrollSmoother().value?.scrollTop(0);
   }

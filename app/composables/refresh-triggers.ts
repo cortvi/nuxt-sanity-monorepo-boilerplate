@@ -16,3 +16,29 @@ export const useRefreshTriggers = (delay?: number, callback?: Function) =>
     callback?.();
   });
 };
+
+
+export const useRefreshTriggersOnImageLoad = (root: HTMLElement) =>
+{
+  const images = [...root.querySelectorAll<HTMLImageElement>('img')];
+  const pending = images.filter(img => !img.complete);
+
+  if (!pending.length)
+  {
+    useRefreshTriggers();
+    return;
+  }
+
+  let remaining = pending.length;
+  const onDone = () =>
+  {
+    remaining--;
+    if (!remaining) useRefreshTriggers();
+  };
+
+  pending.forEach(img =>
+  {
+    img.addEventListener('load', onDone, { once: true });
+    img.addEventListener('error', onDone, { once: true });
+  });
+};

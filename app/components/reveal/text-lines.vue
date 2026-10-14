@@ -10,8 +10,8 @@ const createTrigger = () =>
   trigger = ScrollTrigger.create({
     trigger: root.value,
     start: 'top bottom+=100',
-    toggleActions: 'play none none reset',
     animation: timeline,
+    ...onceUnlessDev,
   });
   emit('on-create', trigger);
 };
@@ -22,7 +22,9 @@ const emit = defineEmits<{
 }>();
 const props = defineProps<{
   text?: string
+  isHtml?: boolean
   timeScale?: number
+  delay?: number
   state?: { value: boolean }
 }>();
 const root = useTemplateRef<HTMLElement>('root');
@@ -43,7 +45,8 @@ useGsap({
   {
     if (props.text)
     {
-      SplitText.create(root.value!, {
+      const target = props.isHtml ? root.value!.children[0]! : root.value!;
+      SplitText.create(target, {
         tag: 'span',
         type: 'chars,lines',
         charsClass: 'char',
@@ -55,6 +58,7 @@ useGsap({
           gsap.set(self.chars, { opacity: 0 });
           timeline = gsap.timeline({
             paused: true,
+            delay: props.delay || 0,
             defaults: { ease: 'power1.in' },
           });
           // When lines are present:
@@ -95,6 +99,7 @@ useGsap({
             gsap.set(self.chars, { opacity: 0 });
             if (!timeline) timeline = gsap.timeline({
               paused: true,
+              delay: props.delay || 0,
               defaults: { ease: 'power1.in' },
             });
             // When lines are present:
@@ -131,10 +136,20 @@ watch([() => isControlled.value, () => props.state?.value], () =>
 
 
 <template>
-<span class="c-reveal-text-lines" ref="root">
+<span class="c-reveal-text-lines" :class="{ 'is-html': isHtml }" ref="root">
   <slot v-if="$slots.default" />
   <template v-else-if="text">
-    {{ text }}
+    <span class="html" v-html="toHTML(text)" v-if="isHtml" />
+    <template v-else>{{ text }}</template>
   </template>
 </span>
 </template>
+
+
+<style lang="scss">
+.c-reveal-text-lines
+{
+  &.is-html { display: block; }
+  >.html, .line { display: block; }
+}
+</style>

@@ -25,8 +25,8 @@ useGsap({
     const trigger = ScrollTrigger.create({
       trigger: root.value,
       start: 'top bottom+=100',
-      toggleActions: 'play none none reset',
       animation: timeline,
+      ...onceUnlessDev,
     });
     emit('on-create', trigger);
   },

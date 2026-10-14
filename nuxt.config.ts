@@ -1,12 +1,11 @@
-/* TODO: Uncomment when NUXT_SITE_URL is set */
-// if (!import.meta.env.NUXT_SITE_URL) {
-//   throw new Error('NUXT_SITE_URL is not set');
-// }
+if (!import.meta.env.NUXT_SITE_URL) {
+  throw new Error('NUXT_SITE_URL is not set');
+}
 
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: '2026-10-14',
   devtools: { enabled: true },
 
   modules: [
@@ -15,6 +14,7 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@nuxt/icon',
     '@nuxtjs/i18n',
+    '@nuxtjs/sitemap',
   ],
 
   runtimeConfig: {
@@ -64,6 +64,9 @@ export default defineNuxtConfig({
   //   },
   //   processCSSVariables: false,
   // },
+  site: {
+    url: import.meta.env.NUXT_SITE_URL,
+  },
   /* TODO: choose i18n strategy & locales */
   // i18n: {
   //   baseUrl: import.meta.env.NUXT_SITE_URL ?? 'https://example.com',
