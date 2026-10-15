@@ -4,19 +4,19 @@
   overflow: hidden;
   &.fixed-dimensions
   {
-    &, >* { @include fx.cover-parent; }
+    >* { @include fx.cover-parent; }
     img, video { object-fit: cover; }
   }
   &.is-auto-width
   {
-    &, picture, img, video {
+    &, picture, img:not(.thumbnail), video, mux-player {
       width: auto;
       height: 100%;
     }
   }
   &.is-auto-height
   {
-    &, picture, img, video {
+    &, picture, img:not(.thumbnail), video, mux-player {
       width: 100%;
       height: auto;
     }
@@ -25,5 +25,21 @@
   {
     background-color: var(--color-black);
     img { display: none; }
+  }
+  mux-player {
+    --controls: none;
+    --media-object-size: cover;
+    --media-object-fit: cover;
+  }
+  picture:not(.is-loaded) { display: none; }
+  >.thumbnail
+  {
+    transition: opacity 0.5s ease-out, visibility 0.4s step-end;
+    &.is-loaded
+    {
+      @include fx.cover-parent;
+      opacity: 0;
+      visibility: hidden;
+    }
   }
 }

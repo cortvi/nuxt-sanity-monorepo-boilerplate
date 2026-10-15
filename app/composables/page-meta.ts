@@ -52,6 +52,10 @@ export const usePageMeta = (
     ogTitle: title,
     ogDescription: description,
     ogImage: image,
+    ogImageType: 'image/png',
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
+    ogImageUrl: image,
 
     twitterTitle: title,
     twitterDescription: description,
