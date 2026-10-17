@@ -6,6 +6,15 @@
 .cache
 dist
 
+# Sanity Studio runtime
+.sanity
+
+# Turborepo
+.turbo
+
+# TypeScript
+*.tsbuildinfo
+
 # Node dependencies
 node_modules
 

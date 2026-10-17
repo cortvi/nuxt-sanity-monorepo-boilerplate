@@ -1,0 +1,14 @@
+{
+  "name": "@repo/eslint-config",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "dependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10.5.0"
+  }
+}

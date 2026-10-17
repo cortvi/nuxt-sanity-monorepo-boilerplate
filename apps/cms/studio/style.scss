@@ -1,0 +1,10 @@
+[data-testid="new-document-button"] {
+  display: none !important;
+}
+
+[data-testid="field-groups"] {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  background-color: var(--card-bg-color);
+}

@@ -1,0 +1,52 @@
+@use 'sass:meta';
+@use '~/assets/scss/app/vars';
+@use '~/assets/scss/app/reset';
+@use '~/assets/scss/app/scrollbars';
+
+
+html
+{
+  /* Basic settings */
+  color: var(--html-color);
+  /* rem base: 1rem = 1px at the 1440 design width, fluid above it */
+  font-size: 1px;
+  @include fx.screen-lg {
+    font-size: #{calc(1 / 1440 * 100vw)};
+  }
+
+  &, body
+  {
+    background-color: var(--html-bg);
+    overscroll-behavior-y: none;
+  }
+  &.no-scrollbar { overflow: hidden !important; }
+}
+
+
+/* Typography */
+// Big fonts — fluid size
+@each $style in (
+  /* TODO: Choose big typography styles */
+) {
+  .text-#{$style}
+  {
+    $mixin: meta.get-mixin($style, 'typo');
+    @include meta.apply($mixin);
+  }
+}
+// Small fonts — fixed size
+@each $style in (
+  /* TODO: Choose small typography styles */
+) {
+  .text-#{$style}
+  {
+    $mixin: meta.get-mixin($style, 'typo');
+    @include meta.apply($mixin, 'px');
+  }
+}
+
+.text-light { font-weight: 300; }
+.text-regular { font-weight: 400; }
+.text-medium { font-weight: 500; }
+.text-semibold { font-weight: 600; }
+.text-bold { font-weight: 700; }

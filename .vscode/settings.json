@@ -6,7 +6,9 @@
   "eslint.validate": [
     "javascript",
     "typescript",
+    "typescriptreact",
     "vue"
   ],
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }
