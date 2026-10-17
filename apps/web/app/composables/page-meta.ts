@@ -1,4 +1,4 @@
-import { titleToken } from '@repo/sanity';
+import { formatTitle } from '@repo/sanity';
 import type { DefaultSeoData, PageSeoData } from '~/types/seo';
 
 
@@ -9,21 +9,19 @@ export const usePageMeta = (
   const siteConfig = useSiteConfig();
   const i18nHead = useLocaleHead();
 
-  const defaultValues = useState<DefaultSeoData>('page-meta');
+  const defaultValues = useState<DefaultSeoData>('page-meta-default-values');
 
   const seoData = computed(() =>
     toValue(seo)
   );
-  /* TODO: configure fallback title format */
   const title = computed(() =>
   {
     const title = seoData.value?.title ?? defaultValues.value?.title;
     if (!title) return siteConfig.name;
-
-    const useFullTitle = seoData.value?.fullTitle ?? defaultValues.value?.fullTitle;
-    if (useFullTitle) return title;
-    const format = defaultValues.value?.titleFormat || `${titleToken} — Nuxt boilerplate`;
-    return format.replace(titleToken, title);
+    return formatTitle(title, {
+      format: defaultValues.value?.titleFormat,
+      ignoreFormat: seoData.value?.ignoreFormat ?? defaultValues.value?.ignoreFormat,
+    });
   });
   const description = computed(() =>
     seoData.value?.description ?? defaultValues.value?.description

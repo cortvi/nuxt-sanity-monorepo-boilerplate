@@ -15,9 +15,10 @@ The Sanity side is optional: if a project only needs the Nuxt template, follow [
 apps/
 ├── web/                 # Nuxt app (see apps/web/README.md for the template checklist)
 └── cms/                 # Sanity Studio
+    ├── components/      # Custom Studio inputs (boolean, SEO title preview, locale field)
     ├── schemas/
     │   ├── documents/   # settings, home
-    │   └── objects/     # seo, localized types
+    │   └── objects/     # seo, defaultSeo, localized types
     ├── studio/
     │   └── structure.ts # Studio sidebar (singletons)
     └── schema.json      # Extracted schema (generated, committed)
@@ -28,11 +29,11 @@ packages/
 
 ### Shared Sanity config: `packages/sanity`
 
-`@repo/sanity` is TypeScript source consumed directly by both apps (Nuxt/Vite, Nitro and the Sanity CLI all transpile it, so there's no build step). It holds static config only; environment variables stay in each app. `index.ts` re-exports one file per concern:
+`@repo/sanity` is TypeScript source consumed directly by both apps (Nuxt/Vite, Nitro and the Sanity CLI all transpile it, so there's no build step). It holds static config and pure helpers only; environment variables stay in each app. `index.ts` re-exports one file per concern:
 
 - `api.ts`: `apiVersion`, used by the Nuxt module and Studio clients
 - `locales.ts`: `locales` (`id`, `title`, `language`) and `defaultLocale`, the single source for Nuxt i18n, the Studio language filter and the localized schema types
-- `singletons.ts`: `settingsId`, `homeId`, `singletonTypes`, singleton document IDs (equal to their types)
+- `seo.ts`: `siteName`, `titleToken`, `fallbackTitleFormat` and `formatTitle`, shared by the web app and the Studio title preview (see [SEO](#seo))
 
 Queries can interpolate its constants: TypeGen resolves the imports and inlines them. Keep interpolated values as plain string literals or template literals, since TypeGen can't evaluate function calls or member access.
 
@@ -74,13 +75,20 @@ Use `pnpm --filter <web|cms> <script>` to run anything else in one app (e.g. `pn
 
 ## Content model
 
-- `settings` (singleton): default SEO, queried in `app.vue` and used for any value a page leaves empty
-- `home` (singleton): localized title, `pages/index.vue`
-- `seo` (object): localized title and description, and a share image (cropped to 1200×630, respecting the editor's crop and hotspot) for each of the above
+- `settings` (singleton): default SEO (`defaultSeo`), queried in `app.vue` and used for any value a page leaves empty
+- `home` (singleton): localized title and page SEO (`seo`), `pages/index.vue`
+- `seo` (object): localized title (with an "Ignore site format" toggle) and description, and a share image (cropped to 1200×630, respecting the editor's crop and hotspot)
+- `defaultSeo` (object): `seo` plus the site title format
 
 `<MediaAsset>` takes a Sanity image object as `source` and builds its URLs with `@sanity/image-url` (respecting crop and hotspot); pass the asset's LQIP (`asset->metadata.lqip`) as `blurUpThumb` for the blur-up placeholder.
 
 Singletons are locked to a fixed document ID (`settings`, `home`) through `structure.ts` and can't be created from the "new document" menu or deleted from the Studio.
+
+Custom Studio inputs live in `apps/cms/components/`:
+
+- `FormInput`: registered Studio-wide in `sanity.config.ts`, renders every boolean field with `BooleanInput` (compact, description in a tooltip)
+- `SeoTitleInput`: SEO title fields plus a live preview of the final title per locale, using the `settings` format when the page doesn't set one
+- `LocaleField`: shows each locale subfield's code as a badge instead of the default header
 
 ## Localization
 
@@ -88,12 +96,12 @@ Locales are defined once in `packages/sanity/locales.ts` (`en` and `es`). Locale
 
 - **Web**: `@nuxtjs/i18n` uses the `prefix` strategy, so every route carries the locale (`/en`, `/es/<path>`) and `/` redirects to the detected locale. UI strings live in `apps/web/app/i18n/locales/<code>.ts` (typed with `LocaleTexts`) and are registered in `app/i18n/i18n.config.ts`.
 - **Studio**: content uses field-level localization. `schemas/objects/locale.ts` generates `localeString` and `localeText` objects with one field per locale, and `@sanity/language-filter` adds a "Filter languages" button to show only the locales an editor works on. A localized field is either required in every locale (`validation: requiredInAllLocales`) or optional in every locale.
-- **Queries**: every query takes a `$locale` param and projects only that locale's value (`null` when empty), so components receive plain strings. Localized fields are written as `locale::pick(field).value`, a GROQ function declared in `LOCALE_FN` (`apps/web/app/queries/fragments.ts`) that every query using it must start with. It holds one `select` branch per locale because TypeGen can't type `field[$locale]`.
+- **Queries**: every query takes a `$locale` param and projects only that locale's value (`null` when empty), so components receive plain strings. Localized fields are written as `locale::pick(field).value`, a GROQ function declared in `LOCALE_FN` (`apps/web/app/queries/utils.ts`) that every query using it must start with. It holds one `select` branch per locale because TypeGen can't type `field[$locale]`.
 
 To add a locale:
 
 1. Add it to `locales` in `packages/sanity/locales.ts`
-2. Add a `select` branch for it to `LOCALE_FN` in `apps/web/app/queries/fragments.ts`
+2. Add a `select` branch for it to `LOCALE_FN` in `apps/web/app/queries/utils.ts`
 3. Add `apps/web/app/i18n/locales/<code>.ts` and register it in `app/i18n/i18n.config.ts`
 4. Run `pnpm typegen`
 
@@ -103,7 +111,17 @@ GROQ queries live in `apps/web/app/queries/` and are wrapped in `defineQuery` (i
 
 Types regenerate automatically while the Studio dev server runs. Run `pnpm typegen` after changing schemas or queries without it.
 
-For SEO, pass the `SEO_FRAGMENT` result through `useSanitySeo`, which builds the share image URL, then hand it to `usePageMeta`.
+## SEO
+
+`app.vue` queries `settings` and stores its SEO as the defaults; pages call `usePageMeta` with only their own values, and anything they leave empty falls back to those defaults. In both cases, pass the `SEO_FRAGMENT` result through `composeSanitySeo` (`apps/web/app/utils/sanity.ts`), which builds the share image URL, then hand it to `usePageMeta`.
+
+Titles go through `formatTitle` (`packages/sanity/seo.ts`), so the site and the Studio preview render them the same way:
+
+- The format is the `settings` title format (e.g. `{{title}} | Site`, must include the `{{title}}` token), or `fallbackTitleFormat` when empty
+- A page's "Ignore site format" toggle uses its title as-is; when unset, it inherits the `settings` toggle
+- A page without a title (and no default title) gets `siteName`
+
+`siteName` is also the Nuxt site name and the Studio title, so set it and `fallbackTitleFormat` per project.
 
 ## Environment
 
@@ -135,9 +153,10 @@ To start a Nuxt-only project, remove the Studio and the Sanity wiring, then flat
 
 - Delete `apps/cms/` and `packages/sanity/`
 - Run `pnpm --filter web remove @nuxtjs/sanity @repo/sanity @sanity/client @sanity/image-url @sanity/browserslist-config groq`
-- In `apps/web/nuxt.config.ts`, delete the `@repo/sanity` import, the `NUXT_SANITY_PROJECT_ID` check, the `'@nuxtjs/sanity'` module and the `sanity` block, and write the i18n `locales` and `defaultLocale` inline (e.g. `locales: [{ code: 'en', name: 'English', language: 'en-GB' }]`)
-- Delete `apps/web/app/queries/`, `apps/web/app/types/sanity.ts`, `apps/web/app/composables/sanity-seo.ts` and `apps/web/app/utils/sanity.ts`
-- In `apps/web/app/components/media-asset.vue`, remove the Sanity branch of `toImageUrl` (the `source || isSanityImageUrl(url)` line and `source` from the destructuring); in `apps/web/app/types/components/media-asset.ts`, remove `source` and the `@sanity/image-url` import. DatoCMS and plain URLs keep working
+- In `apps/web/nuxt.config.ts`, delete the `@repo/sanity` import, the `NUXT_SANITY_PROJECT_ID` check, the `'@nuxtjs/sanity'` module and the `sanity` block, write the site `name` inline and the i18n `locales` and `defaultLocale` inline (e.g. `locales: [{ code: 'en', name: 'English', language: 'en-GB' }]`)
+- In `apps/web/app/composables/page-meta.ts`, replace the `formatTitle` import with a local title format (e.g. `` `${title} — Site` ``) and drop `titleFormat` and `ignoreFormat` (also from `apps/web/app/types/seo.ts`) if the project doesn't need them
+- Delete `apps/web/app/queries/`, `apps/web/app/types/sanity.ts` and `apps/web/app/utils/sanity.ts`
+- In `apps/web/app/components/media-asset.vue`, remove the Sanity branch of `toImageUrl` (the `isSanityImageUrl`/`toSanityImageUrl` lines, `source` from the destructuring and from the missing-URL check); in `apps/web/app/types/components/media-asset.ts`, remove `source` and the `@sanity/image-url` import. DatoCMS and plain URLs keep working
 - In `apps/web/app/app.vue` and `apps/web/app/pages/index.vue`, remove the query and pass static data to `usePageMeta`
 - Remove the `NUXT_SANITY_*` lines from `apps/web/.env.example` and `apps/web/.env`, and the `app/types/sanity.ts` ignore from `apps/web/eslint.config.mjs`
 

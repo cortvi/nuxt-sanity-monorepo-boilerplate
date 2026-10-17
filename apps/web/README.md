@@ -22,7 +22,7 @@ Run with `pnpm --filter web <script>`, or from this folder with `pnpm <script>`.
 ## What's included
 
 - **Nuxt modules**: `@nuxt/eslint`, `@nuxt/fonts`, `@nuxt/hints`, `@nuxt/icon`, `@nuxtjs/i18n`, `@nuxtjs/sanity`, `@nuxtjs/sitemap`
-- **Sanity**: GROQ queries in `app/queries/`, generated types in `app/types/sanity.ts`, `useSanitySeo` for SEO data, and Sanity image support in `<MediaAsset>`
+- **Sanity**: GROQ queries in `app/queries/`, generated types in `app/types/sanity.ts`, `composeSanitySeo` for SEO data, and Sanity image support in `<MediaAsset>`
 - **GSAP**: ScrollTrigger and ScrollSmoother (client plugin and composables; ScrollTo and other addons stubbed for opt-in)
 - **Page transitions**: global middleware with loader and site state
 - **SCSS**: variables, typography mixins, breakpoints, and component styles with auto-imported partials
@@ -38,7 +38,7 @@ app/
 │   ├── app/             # Global styles, tokens, typography
 │   └── components/      # Per-component styles
 ├── components/          # Layout, reveal, media and text components
-├── composables/         # Shared Vue composables (incl. page-meta, sanity-seo)
+├── composables/         # Shared Vue composables (incl. page-meta)
 ├── i18n/                # Locale messages and i18n config
 ├── layouts/             # Default layout (ScrollSmoother wrapper)
 ├── middleware/          # Trailing-slash removal, page transitions
@@ -46,7 +46,7 @@ app/
 ├── plugins/             # GSAP client plugin
 ├── queries/             # GROQ queries (defineQuery)
 ├── types/               # Shared TypeScript types (sanity.ts is generated)
-└── utils/               # Pure helpers
+└── utils/               # Helpers (incl. Sanity image URLs and composeSanitySeo)
 public/                  # Static assets (favicons, OG thumbnail, …)
 ```
 
@@ -90,9 +90,12 @@ Review `features.inlineStyles`: the predicate decides which component styles are
 
 Register only the GSAP addons the project needs (ScrollTo, DrawSVG, CustomEase, Draggable, Flip, …). ScrollSmoother settings (`smooth`, `effects`, etc.) can be tuned here too.
 
-### 9. SEO: `app/composables/page-meta.ts`
+### 9. SEO: `packages/sanity/seo.ts` and `app/composables/page-meta.ts`
 
-`app.vue` (and `error.vue`, which replaces it on errors) calls `usePageMeta`: it sets the default SEO from the Sanity `settings` document plus the site-wide tags. Pages call `usePageMeta` with only their own values, so anything they leave empty falls back to those defaults. Set the title tail, default OG image, meta colors and favicons in `usePageMeta`.
+`app.vue` (and `error.vue`, which replaces it on errors) calls `usePageMeta`: it sets the default SEO from the Sanity `settings` document plus the site-wide tags. Pages call `usePageMeta` with only their own values, so anything they leave empty falls back to those defaults (see [SEO](../../README.md#seo) in the root README).
+
+- Set `siteName` and `fallbackTitleFormat` in `packages/sanity/seo.ts` (editors can override the format from Settings)
+- Set the default OG image, meta colors and favicons in `usePageMeta`
 
 ### 10. Public assets: `public/`
 

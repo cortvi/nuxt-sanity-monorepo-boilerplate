@@ -1,6 +1,6 @@
 export type PageSeoData = {
   title?: string | null
-  fullTitle?: boolean | null
+  ignoreFormat?: boolean | null
   description?: string | null
   image?: string | null
 };

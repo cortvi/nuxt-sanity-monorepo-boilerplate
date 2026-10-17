@@ -1,7 +1,7 @@
 import { home } from './documents/home';
 import { settings } from './documents/settings';
 import { localeString, localeText } from './objects/locale';
-import { seo } from './objects/seo';
+import { defaultSeo, seo } from './objects/seo';
 
 
 export const schemaTypes = [
@@ -10,6 +10,7 @@ export const schemaTypes = [
   settings,
 
   // Objects:
+  defaultSeo,
   seo,
   localeString,
   localeText,

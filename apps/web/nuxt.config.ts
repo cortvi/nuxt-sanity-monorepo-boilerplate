@@ -1,5 +1,6 @@
 import
 {
+  siteName,
   apiVersion,
   locales,
   defaultLocale,
@@ -72,7 +73,7 @@ export default defineNuxtConfig({
   //   processCSSVariables: false,
   // },
   site: {
-    name: 'Nuxt boilerplate',
+    name: siteName,
     url: import.meta.env.NUXT_SITE_URL,
     trailingSlash: false,
   },

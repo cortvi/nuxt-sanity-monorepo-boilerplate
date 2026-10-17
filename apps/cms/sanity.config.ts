@@ -3,16 +3,16 @@ import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { languageFilter } from '@sanity/language-filter';
-import { locales } from '@repo/sanity';
+import { locales, siteName } from '@repo/sanity';
 import { dataset, projectId } from './studio/env';
 import { structure } from './studio/structure';
 import { schemaTypes, singletonActions, singletonTypes } from './schemas';
+import { FormInput } from './components/form-input';
 
 
 export default defineConfig({
   name: 'default',
-  /* TODO: Set studio title */
-  title: 'Nuxt boilerplate',
+  title: siteName,
   projectId,
   dataset,
   plugins: [
@@ -26,6 +26,9 @@ export default defineConfig({
     }),
     visionTool(),
   ],
+  form: {
+    components: { input: FormInput },
+  },
   schema: {
     types: schemaTypes,
     // Disable template creation:

@@ -11,8 +11,7 @@ const { data } = await useSanityQuery<SETTINGS_QUERY_RESULT>(
 
 
 usePageMeta().defaultValues.value = {
-  ...useSanitySeo(data.value?.seo).value,
-  titleFormat: data.value?.titleFormat,
+  ...composeSanitySeo(data.value?.seo).value,
 };
 </script>
 

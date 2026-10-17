@@ -1,23 +1,48 @@
 import { defineField, defineType } from 'sanity';
 import { SearchIcon } from '@sanity/icons/Search';
+import { siteName, titleToken } from '@repo/sanity';
+import { SeoTitleInput } from '../../components/seo-title-input';
 import { localeValidation } from '../../utils/validation';
 
 
-export const seo = defineType({
+/** Builds the page SEO object, or the site-wide default one when `isDefault` */
+const defineSeo = (name: string, title: string, isDefault: boolean) => defineType({
   type: 'object',
-  name: 'seo',
-  title: 'SEO',
+  name,
+  title,
   icon: SearchIcon,
   fields: [
     defineField({
-      type: 'localeString',
+      type: 'object',
       name: 'title',
-    }),
-    defineField({
-      type: 'boolean',
-      name: 'fullTitle',
-      title: 'Full title',
-      description: 'Use the title as-is, without the site name affix',
+      components: { input: SeoTitleInput },
+      fields: [
+        defineField({
+          type: 'localeString',
+          name: 'text',
+          options: { collapsible: false, columns: 1 },
+          components: { field: props => props.renderDefault({ ...props, title: undefined }) },
+        }),
+        ...isDefault ?
+          [defineField({
+            type: 'string',
+            name: 'format',
+            title: 'Title format',
+            description: `Use ${titleToken} where the title goes, e.g. "${titleToken} | ${siteName}"`,
+            validation: rule => rule.custom((value?: string) =>
+              !value || value.includes(titleToken) ?
+                true :
+                `Must include ${titleToken}`
+            ),
+          })] :
+          [],
+        defineField({
+          type: 'boolean',
+          name: 'ignoreFormat',
+          title: 'Ignore site format',
+          description: 'Use the title as-is, without applying the site title format',
+        }),
+      ],
     }),
     defineField({
       type: 'localeText',
@@ -37,3 +62,6 @@ export const seo = defineType({
     }),
   ],
 });
+
+export const seo = defineSeo('seo', 'SEO', false);
+export const defaultSeo = defineSeo('defaultSeo', 'Default SEO', true);
