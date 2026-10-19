@@ -1,0 +1,38 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # nuxt prepare (web postinstall) loads nuxt.config, which throws without these.
+      # Lint never calls Sanity; the values only have to be non-empty.
+      NUXT_SITE_URL: http://localhost:3000
+      NUXT_SANITY_PROJECT_ID: placeholder
+      NUXT_SANITY_DATASET: development
+      SANITY_STUDIO_PROJECT_ID: placeholder
+      SANITY_STUDIO_DATASET: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+
+      - name: Lint
+        run: pnpm lint
