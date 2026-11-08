@@ -31,7 +31,7 @@ export default [
         },
       }],
       '@stylistic/max-len': ['warn', {
-        code: 120,
+        code: 95,
         ignoreUrls: true,
         ignoreStrings: true,
       }],
