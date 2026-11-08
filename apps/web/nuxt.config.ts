@@ -17,7 +17,7 @@ if (!import.meta.env.NUXT_SANITY_PROJECT_ID) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2026-10-14',
+  compatibilityDate: apiVersion,
   devtools: { enabled: true },
 
   modules: [

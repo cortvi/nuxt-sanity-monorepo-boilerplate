@@ -1,1 +1,1 @@
-export const apiVersion = '2026-10-15';
+export const apiVersion = '2026-11-09';
