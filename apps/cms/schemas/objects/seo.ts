@@ -18,17 +18,17 @@ const defineSeo = (name: string, title: string, isDefault: boolean) => defineTyp
       components: { input: SeoTitleInput },
       fields: [
         defineField({
-          type: 'localeString',
+          type: 'internationalizedArrayString',
           name: 'text',
-          options: { collapsible: false, columns: 1 },
-          components: { field: props => props.renderDefault({ ...props, title: undefined }) },
         }),
         ...isDefault ?
           [defineField({
             type: 'string',
             name: 'format',
             title: 'Title format',
-            description: `Use ${titleToken} where the title goes, e.g. "${titleToken} | ${siteName}"`,
+            description: (
+              `Use ${titleToken} where the title goes, e.g. "${titleToken} | ${siteName}"`
+            ),
             validation: rule => rule.custom((value?: string) =>
               !value || value.includes(titleToken) ?
                 true :
@@ -45,7 +45,7 @@ const defineSeo = (name: string, title: string, isDefault: boolean) => defineTyp
       ],
     }),
     defineField({
-      type: 'localeText',
+      type: 'internationalizedArrayText',
       name: 'description',
       validation: rule => localeValidation(
         rule,

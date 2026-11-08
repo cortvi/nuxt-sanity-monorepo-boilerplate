@@ -14,7 +14,7 @@ export const home = defineType({
   ],
   fields: [
     defineField({
-      type: 'localeString',
+      type: 'internationalizedArrayString',
       name: 'title',
       group: 'content',
       validation: requiredInAllLocales,

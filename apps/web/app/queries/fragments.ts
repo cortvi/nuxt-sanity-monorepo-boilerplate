@@ -1,6 +1,6 @@
 export const SEO_FRAGMENT = /* groq */ `
-  "title": locale::pick(seo.title.text).value,
+  "title": seo.title.text[language == $locale][0].value,
   "ignoreFormat": seo.title.ignoreFormat,
-  "description": locale::pick(seo.description).value,
+  "description": seo.description[language == $locale][0].value,
   "image": seo.image
 `;

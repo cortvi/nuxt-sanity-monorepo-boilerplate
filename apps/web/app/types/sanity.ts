@@ -16,26 +16,14 @@ export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
 export type Title = {
-  text?: LocaleString;
+  text?: InternationalizedArrayString;
   ignoreFormat?: boolean;
 };
 
 export type SeoTitle = {
-  text?: LocaleString;
+  text?: InternationalizedArrayString;
   format?: string;
   ignoreFormat?: boolean;
-};
-
-export type LocaleText = {
-  _type: "localeText";
-  en?: string;
-  es?: string;
-};
-
-export type LocaleString = {
-  _type: "localeString";
-  en?: string;
-  es?: string;
 };
 
 export type SanityImageAssetReference = {
@@ -48,7 +36,7 @@ export type SanityImageAssetReference = {
 export type Seo = {
   _type: "seo";
   title?: Title;
-  description?: LocaleText;
+  description?: InternationalizedArrayText;
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -61,7 +49,7 @@ export type Seo = {
 export type DefaultSeo = {
   _type: "defaultSeo";
   title?: SeoTitle;
-  description?: LocaleText;
+  description?: InternationalizedArrayText;
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -96,14 +84,38 @@ export type SanityImageHotspot = {
   width?: number;
 };
 
+export type InternationalizedArrayText = Array<
+  {
+    _key: string;
+  } & InternationalizedArrayTextValue
+>;
+
+export type InternationalizedArrayString = Array<
+  {
+    _key: string;
+  } & InternationalizedArrayStringValue
+>;
+
 export type Home = {
   _id: string;
   _type: "home";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: LocaleString;
+  title?: InternationalizedArrayString;
   seo?: Seo;
+};
+
+export type InternationalizedArrayTextValue = {
+  _type: "internationalizedArrayTextValue";
+  value?: string;
+  language?: string;
+};
+
+export type InternationalizedArrayStringValue = {
+  _type: "internationalizedArrayStringValue";
+  value?: string;
+  language?: string;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -212,15 +224,17 @@ export type Slug = {
 export type AllSanitySchemaTypes =
   | Title
   | SeoTitle
-  | LocaleText
-  | LocaleString
   | SanityImageAssetReference
   | Seo
   | DefaultSeo
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
+  | InternationalizedArrayText
+  | InternationalizedArrayString
   | Home
+  | InternationalizedArrayTextValue
+  | InternationalizedArrayStringValue
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -233,7 +247,7 @@ export type AllSanitySchemaTypes =
 
 // Source: ../web/app/queries/home.ts
 // Variable: HOME_QUERY
-// Query: fn locale::pick($field) = $field {    "value": select(      $locale == "en" => en,      $locale == "es" => es    )  };  *[_type == "home" && _id == "home"][0]{    "title": locale::pick(title).value,    "seo": {   "title": locale::pick(seo.title.text).value,  "ignoreFormat": seo.title.ignoreFormat,  "description": locale::pick(seo.description).value,  "image": seo.image }  }
+// Query: *[_type == "home" && _id == "home"][0]{    "title": title[language == $locale][0].value,    "seo": {   "title": seo.title.text[language == $locale][0].value,  "ignoreFormat": seo.title.ignoreFormat,  "description": seo.description[language == $locale][0].value,  "image": seo.image }  }
 export type HOME_QUERY_RESULT = {
   title: string | null;
   seo: {
@@ -252,7 +266,7 @@ export type HOME_QUERY_RESULT = {
 
 // Source: ../web/app/queries/settings.ts
 // Variable: SETTINGS_QUERY
-// Query: fn locale::pick($field) = $field {    "value": select(      $locale == "en" => en,      $locale == "es" => es    )  };  *[_type == "settings" && _id == "settings"][0]{    "seo": {        "title": locale::pick(seo.title.text).value,  "ignoreFormat": seo.title.ignoreFormat,  "description": locale::pick(seo.description).value,  "image": seo.image,      "titleFormat": seo.title.format    },  }
+// Query: *[_type == "settings" && _id == "settings"][0]{    "seo": {        "title": seo.title.text[language == $locale][0].value,  "ignoreFormat": seo.title.ignoreFormat,  "description": seo.description[language == $locale][0].value,  "image": seo.image,      "titleFormat": seo.title.format    },  }
 export type SETTINGS_QUERY_RESULT = {
   seo: {
     title: string | null;
@@ -272,8 +286,8 @@ export type SETTINGS_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '\n  \n  fn locale::pick($field) = $field {\n    "value": select(\n      $locale == "en" => en,\n      $locale == "es" => es\n    )\n  };\n\n  *[_type == "home" && _id == "home"][0]{\n    "title": locale::pick(title).value,\n    "seo": { \n  "title": locale::pick(seo.title.text).value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": locale::pick(seo.description).value,\n  "image": seo.image\n }\n  }\n': HOME_QUERY_RESULT;
-    '\n  \n  fn locale::pick($field) = $field {\n    "value": select(\n      $locale == "en" => en,\n      $locale == "es" => es\n    )\n  };\n\n  *[_type == "settings" && _id == "settings"][0]{\n    "seo": {\n      \n  "title": locale::pick(seo.title.text).value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": locale::pick(seo.description).value,\n  "image": seo.image\n,\n      "titleFormat": seo.title.format\n    },\n  }\n': SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "home" && _id == "home"][0]{\n    "title": title[language == $locale][0].value,\n    "seo": { \n  "title": seo.title.text[language == $locale][0].value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": seo.description[language == $locale][0].value,\n  "image": seo.image\n }\n  }\n': HOME_QUERY_RESULT;
+    '\n  *[_type == "settings" && _id == "settings"][0]{\n    "seo": {\n      \n  "title": seo.title.text[language == $locale][0].value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": seo.description[language == $locale][0].value,\n  "image": seo.image\n,\n      "titleFormat": seo.title.format\n    },\n  }\n': SETTINGS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

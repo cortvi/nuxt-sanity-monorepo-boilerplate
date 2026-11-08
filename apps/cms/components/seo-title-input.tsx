@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { Badge, Card, Flex, Stack, Text } from '@sanity/ui';
 import { useClient, type ObjectInputProps } from 'sanity';
 import { useLanguageFilterStudioContext } from '@sanity/language-filter';
+import type { InternationalizedArrayItem } from 'sanity-plugin-internationalized-array';
 import { apiVersion, formatTitle, locales, type LocaleCode } from '@repo/sanity';
 
 
 type SeoTitle = {
-  text?: Partial<Record<LocaleCode, string>>
+  text?: InternationalizedArrayItem<string>[]
   ignoreFormat?: boolean
   format?: string
 };
+
+const pickText = (title: SeoTitle | null | undefined, locale: LocaleCode) =>
+  title?.text?.find(({ language }) => language === locale)?.value;
 
 /** Settings' SEO title, kept in sync with its draft */
 const useDefaultSeoTitle = (enabled: boolean) =>
@@ -56,7 +60,7 @@ export const SeoTitleInput = (props: ObjectInputProps<SeoTitle>) =>
           </Text>
           {visibleLocales.map(({ id }) =>
           {
-            const text = value?.text?.[id] ?? defaults?.text?.[id];
+            const text = pickText(value, id) ?? pickText(defaults, id);
             return (
               <Flex key={id} align='center' gap={2}>
                 <Badge fontSize={0}>

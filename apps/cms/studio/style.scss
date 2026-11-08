@@ -8,3 +8,62 @@
   z-index: 101;
   background-color: var(--card-bg-color);
 }
+
+[data-ui="Flex"]:has(> [data-ui="Box"] > [data-ui="VStack"] > [data-ui="VStack"] > [data-testid$='"].value']) > span {
+  display: none;
+}
+
+[data-testid*='[_key=="'][data-testid$='"].value'] > [data-ui="FormRow"] > div > [data-ui="VStack"][data-level] {
+  position: relative;
+
+  > [data-ui="Flex"]:first-child {
+    display: contents;
+
+    > [data-ui="Card"] {
+      position: absolute;
+      top: 0;
+      left: calc(100% + 8px);
+    }
+
+    > [data-ui="fieldHeaderContentBox"] {
+      position: absolute;
+      top: 0;
+      right: calc(100% + 10px);
+      width: max-content;
+      min-width: 0;
+      max-width: none;
+    }
+
+    [data-ui="fieldHeaderContentBox"], [data-ui="Flex"], [data-ui="Text"] {
+      padding: 0;
+    }
+
+    [data-ui="VStack"] > [data-ui="Flex"] {
+      flex-direction: row-reverse;
+    }
+
+    [data-ui="Text"], [data-ui="Label"] {
+      transform: none;
+
+      &::before,
+      &::after {
+        content: none;
+      }
+    }
+
+    [data-ui="Label"] {
+      padding: 3px 4px;
+      border-radius: 9999px;
+      background-color: var(--card-badge-default-bg-color);
+      color: var(--card-badge-default-fg-color);
+      font-size: 10px;
+      font-weight: 400;
+      line-height: 9px;
+      letter-spacing: normal;
+    }
+  }
+}
+
+[data-testid="field-seo.title.text"] > [data-ui="Flex"]:first-child {
+  display: none;
+}

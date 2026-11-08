@@ -15,7 +15,7 @@ The Sanity side is optional: if a project only needs the Nuxt template, follow [
 apps/
 ├── web/                 # Nuxt app (see apps/web/README.md for the template checklist)
 └── cms/                 # Sanity Studio
-    ├── components/      # Custom Studio inputs (boolean, SEO title preview, locale field)
+    ├── components/      # Custom Studio inputs (boolean, SEO title preview)
     ├── schemas/
     │   ├── documents/   # settings, home
     │   └── objects/     # seo, defaultSeo, localized types
@@ -32,7 +32,7 @@ packages/
 `@repo/sanity` is TypeScript source consumed directly by both apps (Nuxt/Vite, Nitro and the Sanity CLI all transpile it, so there's no build step). It holds static config and pure helpers only; environment variables stay in each app. `index.ts` re-exports one file per concern:
 
 - `api.ts`: `apiVersion`, used by the Nuxt module and Studio clients
-- `locales.ts`: `locales` (`id`, `title`, `language`) and `defaultLocale`, the single source for Nuxt i18n, the Studio language filter and the localized schema types
+- `locales.ts`: `locales` (`id`, `title`, `language`) and `defaultLocale`, the single source for Nuxt i18n and the Studio's localized fields
 - `seo.ts`: `siteName`, `titleToken`, `fallbackTitleFormat` and `formatTitle`, shared by the web app and the Studio title preview (see [SEO](#seo))
 
 Queries can interpolate its constants: TypeGen resolves the imports and inlines them. Keep interpolated values as plain string literals or template literals, since TypeGen can't evaluate function calls or member access.
@@ -88,22 +88,20 @@ Custom Studio inputs live in `apps/cms/components/`:
 
 - `FormInput`: registered Studio-wide in `sanity.config.ts`, renders every boolean field with `BooleanInput` (compact, description in a tooltip)
 - `SeoTitleInput`: SEO title fields plus a live preview of the final title per locale, using the `settings` format when the page doesn't set one
-- `LocaleField`: shows each locale subfield's code as a badge instead of the default header
 
 ## Localization
 
 Locales are defined once in `packages/sanity/locales.ts` (`en` and `es`). Locales are independent: content never falls back to another locale, and `defaultLocale` (`en`) is only the locale `/` redirects to when the browser language isn't supported.
 
 - **Web**: `@nuxtjs/i18n` uses the `prefix` strategy, so every route carries the locale (`/en`, `/es/<path>`) and `/` redirects to the detected locale. UI strings live in `apps/web/app/i18n/locales/<code>.ts` (typed with `LocaleTexts`) and are registered in `app/i18n/i18n.config.ts`.
-- **Studio**: content uses field-level localization. `schemas/objects/locale.ts` generates `localeString` and `localeText` objects with one field per locale, and `@sanity/language-filter` adds a "Filter languages" button to show only the locales an editor works on. A localized field is either required in every locale (`validation: requiredInAllLocales`) or optional in every locale.
-- **Queries**: every query takes a `$locale` param and projects only that locale's value (`null` when empty), so components receive plain strings. Localized fields are written as `locale::pick(field).value`, a GROQ function declared in `LOCALE_FN` (`apps/web/app/queries/utils.ts`) that every query using it must start with. It holds one `select` branch per locale because TypeGen can't type `field[$locale]`.
+- **Studio**: content uses field-level localization through [`sanity-plugin-internationalized-array`](https://github.com/sanity-io/plugins/tree/main/plugins/sanity-plugin-internationalized-array), configured in `sanity.config.ts`. Every locale is a default, non-removable row, and the plugin's built-in language filter shows only the locales an editor works on. Localized fields use the `internationalizedArrayString` / `internationalizedArrayText` types (their value types are defined in `schemas/objects/locale.ts`, and the row layout is styled in `studio/style.scss`). A localized field is either required in every locale (`validation: requiredInAllLocales`) or optional in every locale.
+- **Queries**: every query takes a `$locale` param and projects only that locale's value (`null` when empty), so components receive plain strings. Localized fields are written as `field[language == $locale][0].value`.
 
 To add a locale:
 
 1. Add it to `locales` in `packages/sanity/locales.ts`
-2. Add a `select` branch for it to `LOCALE_FN` in `apps/web/app/queries/utils.ts`
-3. Add `apps/web/app/i18n/locales/<code>.ts` and register it in `app/i18n/i18n.config.ts`
-4. Run `pnpm typegen`
+2. Add `apps/web/app/i18n/locales/<code>.ts` and register it in `app/i18n/i18n.config.ts`
+3. Run `pnpm typegen`
 
 ## Queries and types
 
