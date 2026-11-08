@@ -1,4 +1,4 @@
-export const siteName = 'Nuxt boilerplate';
+export const siteName = 'Nuxt-Sanity boilerplate';
 
 
 /** Placeholder replaced by the page title in the site title format */
