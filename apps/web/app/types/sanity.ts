@@ -22,7 +22,7 @@ export type Title = {
 
 export type SeoTitle = {
   text?: InternationalizedArrayString;
-  format?: string;
+  format?: InternationalizedArrayString;
   ignoreFormat?: boolean;
 };
 
@@ -266,7 +266,7 @@ export type HOME_QUERY_RESULT = {
 
 // Source: ../web/app/queries/settings.ts
 // Variable: SETTINGS_QUERY
-// Query: *[_type == "settings" && _id == "settings"][0]{    "seo": {        "title": seo.title.text[language == $locale][0].value,  "ignoreFormat": seo.title.ignoreFormat,  "description": seo.description[language == $locale][0].value,  "image": seo.image,      "titleFormat": seo.title.format    },  }
+// Query: *[_type == "settings" && _id == "settings"][0]{    "seo": {        "title": seo.title.text[language == $locale][0].value,  "ignoreFormat": seo.title.ignoreFormat,  "description": seo.description[language == $locale][0].value,  "image": seo.image,      "titleFormat": seo.title.format[language == $locale][0].value    },  }
 export type SETTINGS_QUERY_RESULT = {
   seo: {
     title: string | null;
@@ -287,7 +287,7 @@ export type SETTINGS_QUERY_RESULT = {
 declare global {
   interface SanityQueries {
     '\n  *[_type == "home" && _id == "home"][0]{\n    "title": title[language == $locale][0].value,\n    "seo": { \n  "title": seo.title.text[language == $locale][0].value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": seo.description[language == $locale][0].value,\n  "image": seo.image\n }\n  }\n': HOME_QUERY_RESULT;
-    '\n  *[_type == "settings" && _id == "settings"][0]{\n    "seo": {\n      \n  "title": seo.title.text[language == $locale][0].value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": seo.description[language == $locale][0].value,\n  "image": seo.image\n,\n      "titleFormat": seo.title.format\n    },\n  }\n': SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "settings" && _id == "settings"][0]{\n    "seo": {\n      \n  "title": seo.title.text[language == $locale][0].value,\n  "ignoreFormat": seo.title.ignoreFormat,\n  "description": seo.description[language == $locale][0].value,\n  "image": seo.image\n,\n      "titleFormat": seo.title.format[language == $locale][0].value\n    },\n  }\n': SETTINGS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

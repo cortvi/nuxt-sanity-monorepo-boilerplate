@@ -10,7 +10,9 @@ const { data: pageData } = await useSanityQuery<HOME_QUERY_RESULT>(
 );
 
 
-usePageMeta(composeSanitySeo(pageData.value?.seo));
+usePageMeta().defaultValues.value = {
+  ...composeSanitySeo(pageData?.value?.seo).value,
+};
 </script>
 
 

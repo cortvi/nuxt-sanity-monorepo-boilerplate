@@ -6,7 +6,7 @@ export const SETTINGS_QUERY = defineQuery(/* groq */ `
   *[_type == "settings" && _id == "settings"][0]{
     "seo": {
       ${SEO_FRAGMENT},
-      "titleFormat": seo.title.format
+      "titleFormat": seo.title.format[language == $locale][0].value
     },
   }
 `);

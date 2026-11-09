@@ -52,11 +52,13 @@ export const usePageMeta = (
   ]);
 
 
-  useHead(() => ({
-    htmlAttrs: i18nHead.value.htmlAttrs,
-    meta: meta.value,
-    link: link.value,
-  }));
+  useHead({
+    htmlAttrs: { ...i18nHead.value.htmlAttrs },
+    title,
+    meta,
+    link,
+  });
+
   useSeoMeta({
     title,
     description,
