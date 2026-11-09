@@ -35,13 +35,16 @@ export default defineConfig({
   },
   schema: {
     types: schemaTypes,
-    // Disable template creation:
-    templates: () => [],
+    // Singletons can't be created:
+    templates: templates =>
+      templates.filter(({ schemaType }) => !singletonTypes.includes(schemaType)),
   },
   document: {
-    actions: (actions, { schemaType }) =>
-      singletonTypes.includes(schemaType) ?
-        actions.filter(({ action }) => action && singletonActions.has(action)) :
-        actions,
+    // Documents are only created from their lists, not from the global "Create" button:
+    newDocumentOptions: (prev, { creationContext }) => creationContext.type === 'global' ? [] : prev,
+    // Limit actions to singleton types:
+    actions: (actions, { schemaType }) => singletonTypes.includes(schemaType) ?
+      actions.filter(({ action }) => action && singletonActions.has(action)) :
+      actions,
   },
 });
