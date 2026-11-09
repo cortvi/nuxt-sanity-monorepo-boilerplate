@@ -6,6 +6,7 @@
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
     "dev:cms": "turbo run dev --filter=cms",
+    "prepare": "pnpm --filter web run postinstall",
     "build": "turbo run build",
     "generate": "turbo run generate",
     "lint": "turbo run lint",
