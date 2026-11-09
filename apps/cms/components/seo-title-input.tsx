@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Badge, Card, Flex, Stack, Text } from '@sanity/ui';
-import { useClient, type ObjectInputProps } from 'sanity';
+import { useClient, useFormValue, type ObjectInputProps } from 'sanity';
 import { useLanguageFilterStudioContext } from '@sanity/language-filter';
 import type { InternationalizedArrayItem } from 'sanity-plugin-internationalized-array';
-import { apiVersion, formatTitle, locales, type LocaleCode } from '@repo/sanity';
+import { apiVersion, formatTitle, locales, siteName, type LocaleCode } from '@repo/sanity';
 
+
+type LocalizedString = InternationalizedArrayItem<string>[];
 
 type SeoTitle = {
-  text?: InternationalizedArrayItem<string>[]
+  text?: LocalizedString
   ignoreFormat?: boolean
-  format?: string
+  format?: LocalizedString
 };
 
-const pickText = (title: SeoTitle | null | undefined, locale: LocaleCode) =>
-  title?.text?.find(({ language }) => language === locale)?.value;
+const pickLocale = (items: LocalizedString | null | undefined, locale: LocaleCode) =>
+  items?.find(({ language }) => language === locale)?.value;
 
 /** Settings' SEO title, kept in sync with its draft */
 const useDefaultSeoTitle = (enabled: boolean) =>
@@ -44,6 +46,8 @@ export const SeoTitleInput = (props: ObjectInputProps<SeoTitle>) =>
   const { value } = props;
   const isDefault = props.schemaType.fields.some(({ name }) => name === 'format');
   const defaults = useDefaultSeoTitle(!isDefault);
+  // Documents without a `title` field (e.g. Settings) resolve to undefined:
+  const documentTitle = useFormValue(['title']) as LocalizedString | undefined;
   const { selectedLanguageIds } = useLanguageFilterStudioContext();
 
   const visibleLocales = selectedLanguageIds.length ?
@@ -60,19 +64,21 @@ export const SeoTitleInput = (props: ObjectInputProps<SeoTitle>) =>
           </Text>
           {visibleLocales.map(({ id }) =>
           {
-            const text = pickText(value, id) ?? pickText(defaults, id);
+            const title = pickLocale(value?.text, id) || (!isDefault && (
+              pickLocale(documentTitle, id) || pickLocale(defaults?.text, id)
+            ));
             return (
               <Flex key={id} align='center' gap={2}>
                 <Badge fontSize={0}>
                   {id.toUpperCase()}
                 </Badge>
-                <Text size={1} muted={!text}>
-                  {text ?
-                    formatTitle(text, {
-                      format: value?.format ?? defaults?.format,
+                <Text size={1} muted={!title}>
+                  {title ?
+                    formatTitle(title, {
+                      format: pickLocale(isDefault ? value?.format : defaults?.format, id),
                       ignoreFormat: value?.ignoreFormat ?? defaults?.ignoreFormat,
                     }) :
-                    'No title'}
+                    siteName}
                 </Text>
               </Flex>
             );

@@ -23,16 +23,16 @@ const defineSeo = (name: string, title: string, isDefault: boolean) => defineTyp
         }),
         ...isDefault ?
           [defineField({
-            type: 'string',
+            type: 'internationalizedArrayString',
             name: 'format',
             title: 'Title format',
             description: (
               `Use ${titleToken} where the title goes, e.g. "${titleToken} | ${siteName}"`
             ),
-            validation: rule => rule.custom((value?: string) =>
-              !value || value.includes(titleToken) ?
-                true :
-                `Must include ${titleToken}`
+            validation: rule => localeValidation(
+              rule,
+              (text?: string) => !text || text.includes(titleToken),
+              `Must include ${titleToken}`
             ),
           })] :
           [],
