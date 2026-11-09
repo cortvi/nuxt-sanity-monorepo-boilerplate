@@ -17,33 +17,57 @@ export const useGsap = (options: {
   sources?: WatchSource | WatchSource[]
 }) =>
 {
-  const { isRevealed } = useSiteState();
-  const sources: (WatchSource | WatchSource[])[] = [
-    options.scope,
-    isRevealed,
-  ];
-  if (options.sources) sources.push(options.sources);
   const ctx = {
     value: undefined as (gsap.Context | undefined),
     revert: () => ctx.value && ctx.value.revert(),
   };
 
-  // Recall onMount callback when extra sources change:
-  if (options.onMount && options.sources)
+
+  if (options.onMount)
   {
-    watch([options.scope, options.sources], () =>
+    // Recall onMount callback when extra sources change:
+    if (options.sources)
+    {
+      const sources: WatchSource[] = [
+        options.scope,
+        ...Array.isArray(options.sources) ?
+          options.sources :
+          [options.sources],
+      ];
+      watch(sources, () =>
+      {
+        if (!options.scope.value) return;
+        if (ctx.value) ctx.value.add(options.onMount!, options.scope.value);
+        else ctx.value = gsap.context(options.onMount!, options.scope.value);
+      }, {
+        flush: 'post',
+        immediate: true,
+      });
+    }
+    // Only call when there are no sources to watch, otherwise it will be called twice:
+    else onMounted(() =>
     {
       if (!options.scope.value) return;
-      if (ctx.value) ctx.value.add(options.onMount!, options.scope.value);
-      else ctx.value = gsap.context(options.onMount!, options.scope.value);
-    }, {
-      flush: 'post',
-      immediate: true,
+      ctx.value = gsap.context(
+        ctx => options.onMount?.(ctx),
+        options.scope.value
+      );
     });
   }
-  // Add onReady callback:
+
+
   if (options.onReady)
   {
+    const { isRevealed } = useSiteState();
+    const sources: WatchSource[] = [
+      options.scope,
+      isRevealed,
+    ];
+    if (options.sources) sources.push(...(
+      Array.isArray(options.sources) ?
+        options.sources :
+        [options.sources]
+    ));
     watch(sources, () =>
     {
       if (!options.scope.value || !isRevealed.value) return;
@@ -55,23 +79,11 @@ export const useGsap = (options: {
     });
   }
 
+
   // Cleanup on scope change:
   watch(options.scope, () => {
     if (!options.scope.value) ctx.revert();
   });
-
-  // Only call when there are no sources to watch, otherwise it will be called twice:
-  if (options.onMount && !options.sources)
-  {
-    onMounted(() =>
-    {
-      if (!options.scope.value) return;
-      ctx.value = gsap.context(
-        ctx => options.onMount?.(ctx),
-        options.scope.value
-      );
-    });
-  }
   onUnmounted(ctx.revert);
 
 
