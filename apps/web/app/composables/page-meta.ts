@@ -1,15 +1,15 @@
 import { formatTitle } from '@repo/sanity';
-import type { DefaultSeoData, PageSeoData } from '~/types/seo';
+import type { SeoDefaultData, SeoData } from '~/types/seo';
 
 
 export const usePageMeta = (
-  seo?: MaybeRefOrGetter<PageSeoData | undefined>
+  seo?: MaybeRefOrGetter<Partial<SeoData> | undefined>
 ) =>
 {
   const siteConfig = useSiteConfig();
   const i18nHead = useLocaleHead();
 
-  const defaultValues = useState<DefaultSeoData>('page-meta-default-values');
+  const defaultValues = useState<Partial<SeoDefaultData>>('page-meta-default-values');
 
   const seoData = computed(() =>
     toValue(seo)

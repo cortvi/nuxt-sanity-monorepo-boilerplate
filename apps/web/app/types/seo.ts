@@ -1,10 +1,8 @@
-export type PageSeoData = {
-  title?: string | null
-  ignoreFormat?: boolean | null
-  description?: string | null
-  image?: string | null
-};
+import type { SETTINGS_QUERY_RESULT } from './sanity';
 
-export type DefaultSeoData = PageSeoData & {
-  titleFormat?: string | null
-};
+
+export type SanitySeoDefault = NonNullable<SETTINGS_QUERY_RESULT>['seo'];
+export type SanitySeo = Omit<NonNullable<SETTINGS_QUERY_RESULT>['seo'], 'titleFormat'>;
+
+export type SeoDefaultData = Omit<SanitySeoDefault, 'image'> & { image: string | null };
+export type SeoData = Omit<SanitySeo, 'image'> & { image: string | null };

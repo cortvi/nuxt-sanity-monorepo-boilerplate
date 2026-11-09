@@ -1,5 +1,4 @@
-import type { PageSeoData } from '~/types/seo';
-import type { SETTINGS_QUERY_RESULT } from '~/types/sanity';
+import type { SanitySeoDefault, SanitySeo, SeoDefaultData, SeoData } from '~/types/seo';
 import { createImageUrlBuilder, type SanityImageSource } from '@sanity/image-url';
 
 
@@ -27,15 +26,16 @@ export function toSanityImageUrl(
 }
 
 
-type SanitySeo = Partial<NonNullable<SETTINGS_QUERY_RESULT>['seo']>;
 /**
  * Maps a `SEO_FRAGMENT` result to be used by `usePageMeta`:
  * - crops the image to a 1200×630 JPG respecting its crop & hotspot.
  */
-export const composeSanitySeo = (seo: MaybeRefOrGetter<SanitySeo | undefined>) =>
+export const composeSanitySeo = (
+  seo: MaybeRefOrGetter<SanitySeoDefault | SanitySeo | undefined>
+) =>
 {
   const imageBuilder = createImageUrlBuilder(useSanity().client);
-  return computed<PageSeoData | undefined>(() =>
+  return computed<SeoDefaultData | SeoData | undefined>(() =>
   {
     const data = toValue(seo);
     if (!data) return;
