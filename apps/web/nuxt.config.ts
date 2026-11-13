@@ -85,7 +85,6 @@ export default defineNuxtConfig({
   /* TODO: choose i18n strategy (locales live in @repo/sanity) */
   i18n: {
     baseUrl: import.meta.env.NUXT_SITE_URL,
-    restructureDir: 'app/i18n',
     strategy: 'prefix',
     locales: locales.map(({ id, title, language }) =>
       ({ code: id, name: title, language })

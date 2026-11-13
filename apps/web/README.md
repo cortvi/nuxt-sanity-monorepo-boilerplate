@@ -39,7 +39,6 @@ app/
 │   └── components/      # Per-component styles
 ├── components/          # Layout, reveal, media and text components
 ├── composables/         # Shared Vue composables (incl. page-meta)
-├── i18n/                # Locale messages and i18n config
 ├── layouts/             # Default layout (ScrollSmoother wrapper)
 ├── middleware/          # Trailing-slash removal, page transitions
 ├── pages/               # Routes (index = home)
@@ -47,6 +46,7 @@ app/
 ├── queries/             # GROQ queries (defineQuery)
 ├── types/               # Shared TypeScript types (sanity.ts is generated)
 └── utils/               # Helpers (incl. Sanity image URLs and composeSanitySeo)
+i18n/                    # Locale messages and i18n config
 public/                  # Static assets (favicons, OG thumbnail, …)
 ```
 
@@ -76,10 +76,10 @@ Uncomment and configure the `@nuxt/fonts` block: font families, weights, preload
 
 Choose custom scrollbar styles or keep the `.no-scrollbar` helper only.
 
-### 6. i18n: `nuxt.config.ts`, `app/i18n/`, `app/types/i18n/`
+### 6. i18n: `nuxt.config.ts`, `i18n/`, `app/types/i18n/`
 
 - Review `i18n` in `nuxt.config.ts`: it ships with the `prefix` strategy; locales (`en`, `es`) and the default locale come from `packages/sanity/locales.ts`
-- Add locale files under `app/i18n/locales/` (registered in `app/i18n/i18n.config.ts`) and extend the `LocaleTexts` type in `app/types/i18n/app.ts`
+- Add locale files under `i18n/locales/` (registered in `i18n/i18n.config.ts`) and extend the `LocaleTexts` type in `app/types/i18n/app.ts`
 - To add or remove a locale, follow the steps in the [root README](../../README.md#localization)
 
 ### 7. Inline styles: `nuxt.config.ts`
@@ -105,7 +105,7 @@ Add favicons under `public/favicon/` and an OG thumbnail at `public/thumbnail.jp
 
 Replace the minimal status-code placeholder with a styled error view.
 
-### 12. Locale copy: `app/i18n/locales/`
+### 12. Locale copy: `i18n/locales/`
 
 Replace placeholder strings and expand the `LocaleTexts` type as you add keys.
 

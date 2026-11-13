@@ -93,14 +93,14 @@ Custom Studio inputs live in `apps/cms/components/`:
 
 Locales are defined once in `packages/sanity/locales.ts` (`en` and `es`). Locales are independent: content never falls back to another locale, and `defaultLocale` (`en`) is only the locale `/` redirects to when the browser language isn't supported.
 
-- **Web**: `@nuxtjs/i18n` uses the `prefix` strategy, so every route carries the locale (`/en`, `/es/<path>`) and `/` redirects to the detected locale. UI strings live in `apps/web/app/i18n/locales/<code>.ts` (typed with `LocaleTexts`) and are registered in `app/i18n/i18n.config.ts`.
+- **Web**: `@nuxtjs/i18n` uses the `prefix` strategy, so every route carries the locale (`/en`, `/es/<path>`) and `/` redirects to the detected locale. UI strings live in `apps/web/i18n/locales/<code>.ts` (typed with `LocaleTexts`) and are registered in `i18n/i18n.config.ts`.
 - **Studio**: content uses field-level localization through [`sanity-plugin-internationalized-array`](https://github.com/sanity-io/plugins/tree/main/plugins/sanity-plugin-internationalized-array), configured in `sanity.config.ts`. Every locale is a default, non-removable row, and the plugin's built-in language filter shows only the locales an editor works on. Localized fields use the `internationalizedArrayString` / `internationalizedArrayText` types (their value types are defined in `schemas/objects/locale.ts`, and the row layout is styled in `studio/style.scss`). A localized field is either required in every locale (`validation: requiredInAllLocales`) or optional in every locale.
 - **Queries**: every query takes a `$locale` param and projects only that locale's value (`null` when empty), so components receive plain strings. Localized fields are written as `field[language == $locale][0].value`.
 
 To add a locale:
 
 1. Add it to `locales` in `packages/sanity/locales.ts`
-2. Add `apps/web/app/i18n/locales/<code>.ts` and register it in `app/i18n/i18n.config.ts`
+2. Add `apps/web/i18n/locales/<code>.ts` and register it in `i18n/i18n.config.ts`
 3. Run `pnpm typegen`
 
 ## Queries and types
