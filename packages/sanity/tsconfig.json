@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["esnext"],
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["*.ts"]
+}
