@@ -4,7 +4,8 @@ import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
 import type { BooleanInputProps } from 'sanity';
 
 
-/** Compact take on the default boolean input: tighter padding and the description in a tooltip */
+/** Compact take on the default boolean input:
+ * tighter padding and the description in a tooltip */
 export const BooleanInput = (props: BooleanInputProps) =>
 {
   const { id, value, schemaType, readOnly, elementProps, validation } = props;

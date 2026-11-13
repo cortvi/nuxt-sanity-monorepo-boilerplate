@@ -11,7 +11,7 @@ export const fallbackTitleFormat = `${titleToken} — ${siteName}`;
 export const formatTitle = (
   title: string,
   { format, ignoreFormat }: {
-    format?: string | null,
+    format?: string | null
     ignoreFormat?: boolean | null
   } = {}
 ) =>

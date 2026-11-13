@@ -4,5 +4,15 @@
   "private": true,
   "exports": {
     ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "eslint": "^10.14.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2"
   }
 }
