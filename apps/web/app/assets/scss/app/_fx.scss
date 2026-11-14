@@ -33,9 +33,8 @@
 @mixin font($size, $line-height: false, $spacing: false, $units: 'rem')
 {
   font-size: #{$size}#{$units};
-  /* TODO: Choose line-height calculation method */
+  // Unitless multiplier, passed as-is
   @if $line-height { line-height: $line-height; }
-  // @if $line-height { line-height: #{calc($line-height / $size)}em; }
   @if $spacing { letter-spacing: #{calc($spacing / 100)}em; }
 }
 
@@ -56,6 +55,20 @@
 }
 @mixin screen-md { @include breakpoint(901, 'min') { @content; } }
 @mixin screen-lg { @include breakpoint(1441, 'min') { @content; } }
+
+@mixin visually-hidden
+{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 @mixin no-scrollbar
 {

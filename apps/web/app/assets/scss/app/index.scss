@@ -50,3 +50,6 @@ html
 .text-medium { font-weight: 500; }
 .text-semibold { font-weight: 600; }
 .text-bold { font-weight: 700; }
+
+/* Utilities */
+.visually-hidden { @include fx.visually-hidden; }
